@@ -3,6 +3,7 @@ stages:
 
 variables:
   ALLURE_RESULTS_DIR: "allure-results"
+  ALLURE_REPORTS_DIR: "allure-reports"
 
 run_tests:
   stage: test
@@ -15,5 +16,30 @@ run_tests:
   only:
     - master
 
+schedule_tests:
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - pytest --alluredir=$ALLURE_RESULTS_DIR
+  artifacts:
+    paths:
+      - $ALLURE_RESULTS_DIR
+      - $ALLURE_REPORTS_DIR
+  only:
+    - schedules
+
+allure_report:
+  stage: test
+  script:
+    - apt-get update -qy
+    - apt-get install -y allure
+    - allure generate --clean $ALLURE_RESULTS_DIR -o $ALLURE_REPORTS_DIR
+  artifacts:
+    paths:
+      - $ALLURE_REPORTS_DIR
+  only:
+    - master
+    - schedules
+
 include:
-  - template: 'Workflows/merge_request_pipelines.gitlab-ci.yml'
+  - template: 'Workflows/merge_request_pipelines.gitlab
