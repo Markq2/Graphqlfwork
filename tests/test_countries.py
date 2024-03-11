@@ -3,7 +3,6 @@ import allure
 from utilities.graphql_requests import GraphQLRequests
 from utilities.data_parser import DataParser
 from utilities.logger import Logger
-from reports.report_generator import ReportGenerator
 
 
 @allure.feature("GraphQL Queries")
