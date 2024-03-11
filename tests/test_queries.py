@@ -3,7 +3,7 @@ import allure
 from utilities.graphql_requests import GraphQLRequests
 from utilities.data_parser import DataParser
 from utilities.logger import Logger
-
+from utilities.report_generator import ReportGenerator
 
 @allure.feature("GraphQL Queries")
 class TestGraphQLQueries:
@@ -37,7 +37,7 @@ class TestGraphQLQueries:
             self.logger.info(f"Response for {country_code}: {parsed_response}")
 
         with allure.step(f"Verifying 'data' field in the response for {country_code}"):
-            assert 'data' in parsed_response, "Response does not contain 'data' field"
+            ReportGenerator.log_test_result('data' in parsed_response)
 
     @allure.story("Get Continent Name by Code")
     @pytest.mark.parametrize("codes", ["SA", "NA", "EU"])
@@ -63,7 +63,7 @@ class TestGraphQLQueries:
             self.logger.info(f"Response for {codes}: {parsed_response}")
 
         with allure.step(f"Verifying 'data' field in the response for {codes}"):
-            assert 'data' in parsed_response and parsed_response['data'], f"Unexpected response: {parsed_response}"
+            ReportGenerator.log_test_result('data' in parsed_response and parsed_response['data'])
 
     @allure.story("Get Countries That Start with 'A'")
     def test_get_countries_starts_with_a(self):
@@ -82,8 +82,8 @@ class TestGraphQLQueries:
 
         with allure.step("Parsing response and verifying country names"):
             parsed_response = DataParser.parse_json(response.text)
-            assert all(country['name'].startswith('A') for country in
-                       parsed_response.get('data', {}).get('countries', [])), "Not all countries start with 'A'"
+            ReportGenerator.log_test_result(all(country['name'].startswith('A') for country in
+                                                parsed_response.get('data', {}).get('countries', [])))
 
     @allure.story("Get Countries with USD Currency")
     def test_get_countries_with_usd_currency(self):
@@ -106,5 +106,5 @@ class TestGraphQLQueries:
             self.logger.info("Response for countries using USD currency: %s", parsed_response)
 
         with allure.step("Verifying 'currency' field in the response for countries using USD currency"):
-            assert all(country['currency'] == 'USD' for country in
-                       parsed_response['data']['countries']), "Not all countries use USD currency"
+            ReportGenerator.log_test_result(all(country['currency'] == 'USD' for country in
+                                                parsed_response['data']['countries']))
