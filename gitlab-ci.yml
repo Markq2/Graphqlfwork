@@ -1,0 +1,19 @@
+stages:
+  - test
+
+variables:
+  ALLURE_RESULTS_DIR: "allure-results"
+
+run_tests:
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - pytest --alluredir=$ALLURE_RESULTS_DIR
+  artifacts:
+    paths:
+      - $ALLURE_RESULTS_DIR
+  only:
+    - master
+
+include:
+  - template: 'Workflows/merge_request_pipelines.gitlab-ci.yml'
